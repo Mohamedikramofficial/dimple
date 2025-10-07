@@ -1,13 +1,24 @@
 {
   "name": "Dimple",
   "short_name": "Dimple",
+  "id": "com.mohamedikramofficial.dimple",
+  "description": "A beautiful love diary app with music, hearts, and quotes.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#ff4f95",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "categories": ["lifestyle", "romance", "entertainment"],
+  "screenshots": [
+    {
+      "src": "header-couple.png",
+      "sizes": "1080x720",
+      "type": "image/png"
+    }
   ]
 }
