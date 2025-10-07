@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dimple (Tamil Poem fits + Glow)</title>
+<style>
+  :root{ --p1:#ff4f95; --p2:#ff8fbe; --ink:#2f1a25; --muted:#9a466c; --line:#f3c7db; }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans","Noto Sans Tamil","Noto Naskh Arabic",sans-serif;
+    color:var(--ink); background:#fff;
+  }
+
+  /* Header */
+  .heroWrap{position:fixed;top:0;left:0;right:0;height:38vh;z-index:-1}
+  .heroImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .contentOffset{padding-top:40vh}
+
+  /* Days-left (optional) */
+  #daysBadge{position:fixed;top:12px;right:12px;z-index:5;background:#fff;border:1px solid var(--line);
+    color:#7a2a4a;border-radius:999px;padding:8px 12px;box-shadow:0 10px 30px rgba(255,79,149,.15);
+    font-weight:700;font-size:13px}
+
+  /* Splash */
+  #splash{
+    position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at center,#ffb3d9 0%,#ff6fa8 40%,var(--p1) 70%,#b4005a 100%);
+    animation:splashGlow 3s ease-in-out infinite alternate;
+  }
+  #splash .heart{
+    font-size:120px; line-height:1;
+    animation:heartBeat 1.6s ease-in-out infinite;
+    filter:drop-shadow(0 0 18px rgba(255,94,160,.65));
+  }
+  #splash.fadeOut{animation:fadeOut .7s ease forwards;}
+  #skip{position:fixed;bottom:10px;right:10px;z-index:40;font-size:11px;opacity:.35}
+  @keyframes splashGlow{
+    0%{box-shadow:0 0 60px 20px #ff9cc6 inset,0 0 60px 20px #ff6aa6}
+    100%{box-shadow:0 0 90px 40px var(--p1) inset,0 0 80px 30px #ff99c9}
+  }
+  @keyframes heartBeat{50%{transform:scale(1.12)}}
+  @keyframes fadeOut{to{opacity:0;visibility:hidden}}
+
+  /* Passcode */
+  #lock{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;z-index:15}
+  #lock::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,.9));z-index:-1}
+  #lock::after{content:"";position:absolute;inset:0;background:url('header-couple.png') center/cover no-repeat;opacity:.18;z-index:-2}
+  .panel{width:min(480px,100%);background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;
+         box-shadow:0 30px 70px rgba(255,79,149,.18)}
+  .topHeart{font-size:40px;text-align:center}
+  h2{margin:4px 0 6px;font-size:22px;color:#7a2a4a;text-align:center}
+  p{margin:0 0 14px;text-align:center;color:#6a3952}
+  .pin{display:flex;gap:10px;justify-content:center}
+  input[type=password]{width:230px;height:48px;border:1px solid var(--line);border-radius:12px;text-align:center;font-size:18px;font-weight:800;letter-spacing:3px}
+  .row{display:flex;gap:10px;justify-content:center;margin-top:10px}
+  .btn{height:44px;padding:0 18px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--p1),var(--p2));color:#fff;font-weight:800}
+  .btn.ghost{background:#fff;color:#b03c6b;border:1px dashed var(--line)}
+  .err{color:#ff2f6f;text-align:center;min-height:1.2em;margin-top:8px}
+  .shake{animation:shake .3s}@keyframes shake{25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
+
+  /* Main layout */
+  .wrap{min-height:calc(100vh - 40vh);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px}
+  .stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:820px}
+
+  /* Tamil poem card (fits inside box; pink glow) */
+  .poemWrap{
+    width:min(720px,92vw);
+    margin-top:-6px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px 16px;
+    box-shadow:0 16px 50px rgba(255,79,149,.12);
+    overflow:hidden;              /* keep everything inside the box */
+  }
+  .poemLabel{
+    display:block;
+    font-size:12px;
+    letter-spacing:.08em;
+    color:#b06a86;
+    margin-bottom:6px;
+    text-transform:uppercase;
+    text-align:center;
+    opacity:.85;
+  }
+  .poemLine{
+    font-family:"Noto Sans Tamil","Noto Sans",system-ui,sans-serif;
+    font-weight:800;
+    color:#441b30;
+    text-align:center;
+    line-height:1.7;
+    white-space:normal;           /* allow wrapping */
+    word-break:break-word;        /* break long runs without spaces */
+    overflow-wrap:anywhere;       /* modern wrap for long Tamil runs */
+    padding:2px 4px;
+  }
+  /* typing caret + pink glow */
+  .poemType{
+    display:inline;               /* allow wrapping with the text */
+    border-right:2px solid currentColor;  /* caret uses text color */
+    vertical-align:bottom;
+    animation:blinkCaret 1s step-end infinite, pinkGlow 2.2s ease-in-out infinite;
+    color:var(--p1);
+    text-shadow:
+      0 0 6px rgba(255,79,149,.45),
+      0 0 14px rgba(255,143,190,.35);
+  }
+  @keyframes blinkCaret{50%{border-color:transparent}}
+  @keyframes pinkGlow{
+    0%,100%{
+      color:var(--p1);
+      text-shadow:0 0 6px rgba(255,79,149,.45), 0 0 14px rgba(255,143,190,.35);
+    }
+    50%{
+      color:var(--p2);
+      text-shadow:0 0 10px rgba(255,143,190,.55), 0 0 22px rgba(255,79,149,.45);
+    }
+  }
+
+  /* Name typing loop */
+  .handwrite{width:min(680px,92vw);text-align:center;margin-top:6px}
+  .type-loop{
+    display:inline-block;white-space:nowrap;overflow:hidden;border-right:2px solid var(--muted);
+    font-size:18px;color:#9a466c;font-weight:800;letter-spacing:.5px;
+    animation:typeSmall 3s steps(12,end) infinite, blinkSmall 1s step-end infinite;
+  }
+  @keyframes typeSmall{0%{width:0} 50%{width:12ch} 100%{width:0}}
+  @keyframes blinkSmall{50%{border-color:transparent}}
+
+  .floaters{position:relative;height:40px;width:min(680px,92vw);overflow:hidden}
+  .emoji{position:absolute;animation:drift 18s linear infinite;opacity:.9;font-size:22px}
+  .emoji.two{left:40%;animation-duration:24s;animation-delay:1.2s}
+  @keyframes drift{0%{transform:translateX(-10%)}50%{transform:translateX(110%) translateY(-6px)}100%{transform:translateX(-10%)}}
+
+  /* Music bar */
+  .musicWrap{position:fixed;left:50%;transform:translateX(-50%);bottom:44px;width:min(720px,94vw);z-index:6;
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 12px;box-shadow:0 12px 40px rgba(255,79,149,.14)}
+  .musicRow{display:flex;align-items:center;gap:12px}
+  .playBtn{border:none;background:transparent;font-size:22px;cursor:pointer;filter:drop-shadow(0 0 8px rgba(255,94,160,.6));transition:transform .15s}
+  .playBtn:active{transform:scale(.92)}.playBtn.glow{animation:heartbeat 1.5s ease-in-out infinite}
+  @keyframes heartbeat{0%,100%{filter:drop-shadow(0 0 8px rgba(255,94,160,.55))}50%{filter:drop-shadow(0 0 16px rgba(255,94,160,.9))}}
+  .seekTrack{flex:1;height:6px;background:var(--line);border-radius:999px;cursor:pointer;position:relative}
+  .seekFill{position:absolute;left:0;top:0;height:100%;width:0%;background:linear-gradient(90deg,var(--p1),var(--p2))}
+  .time{min-width:70px;text-align:right;color:#b06a86;font-weight:700;font-size:12px}
+
+  footer{position:fixed;bottom:10px;left:0;right:0;text-align:center;color:#b06a86;font-size:12px;z-index:5}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="heroWrap"><img class="heroImg" src="header-couple.png" alt=""></div>
+<div id="daysBadge">Days left: <span id="daysLeft">—</span></div>
+
+<!-- Splash -->
+<div id="splash"><div class="heart">🩷</div></div>
+<button id="skip" title="Skip splash">skip</button>
+
+<!-- Passcode -->
+<section id="lock" style="display:none">
+  <div class="panel" id="lockPanel">
+    <div class="topHeart">🩷</div>
+    <h2>Sri......Ram</h2>
+    <p>Enter your 8-digit passcode to open <b>Dimple</b>.</p>
+    <div class="pin"><input id="pin" type="password" maxlength="8" placeholder="••••••••"></div>
+    <div class="row"><button id="unlock" class="btn">Unlock</button><button class="btn ghost" id="clear">Clear</button></div>
+    <div id="err" class="err"></div>
+  </div>
+</section>
+
+<!-- Main -->
+<div class="contentOffset">
+  <main class="wrap" id="app" style="display:none">
+    <div class="stage">
+
+      <!-- Tamil poem (animated writing, fits inside box) -->
+      <div class="poemWrap">
+        <span class="poemLabel">தமிழ் கவிதை</span>
+        <div class="poemLine">
+          <span id="poem" class="poemType"></span>
+        </div>
+      </div>
+
+      <!-- Typing name loop -->
+      <div class="handwrite"><span class="type-loop">Sri......Ram</span></div>
+
+      <div class="floaters" aria-hidden="true"><div class="emoji">💍</div><div class="emoji two">🩷</div></div>
+    </div>
+  </main>
+</div>
+
+<!-- Music bar -->
+<div class="musicWrap" id="musicWrap" style="display:none">
+  <div class="musicRow">
+    <button class="playBtn" id="playBtn" title="Play/Pause">🩷</button>
+    <div class="seekTrack" id="seekTrack" title="Tap to seek"><div class="seekFill" id="seekFill"></div></div>
+    <div class="time" id="timeText">00:00</div>
+  </div>
+</div>
+
+<footer>Developed with love by Mohamed Ikram</footer>
+<audio id="player" src="song.mp3" preload="metadata"></audio>
+
+<script>
+const PIN="20041999";
+const ZONE="Asia/Colombo";
+
+/* Days left */
+function toZone(d,tz){
+  const fmt=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',minute:'2-digit',hour12:false});
+  const [th,tm]=fmt.format(d).split(':').map(Number), dh=d.getHours(), dm=d.getMinutes();
+  let diff=(th*60+tm)-(dh*60+dm); if(diff<=-720) diff+=1440; if(diff>720) diff-=1440; return d.getTime()+diff*60000;
+}
+function toZonedDateMs(iso,tz){ const d=new Date(iso); return toZone(d,tz); }
+function updateDaysLeft(){
+  const target=toZonedDateMs("2027-05-03T00:00:00",ZONE);
+  const now=Date.now();
+  const days=Math.max(0, Math.ceil((target-now)/(24*3600*1000)));
+  document.getElementById('daysLeft').textContent=days;
+}
+updateDaysLeft();
+
+/* Splash (animated + safe) */
+(function(){
+  const splash=document.getElementById('splash');
+  const skip=document.getElementById('skip');
+  const lock=document.getElementById('lock');
+  let done=false;
+  function endSplash(){
+    if(done) return; done=true;
+    try{
+      splash.classList.add('fadeOut');
+      const cleanup=()=>{splash.style.display='none';lock.style.display='flex';splash.removeEventListener('animationend',cleanup);}
+      splash.addEventListener('animationend',cleanup);
+      setTimeout(cleanup,800);
+    }catch{ splash.style.display='none';lock.style.display='flex'; }
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(endSplash,1500),{once:true});
+  setTimeout(endSplash,4000);
+  skip.addEventListener('click',endSplash);
+})();
+
+/* Passcode */
+const pin=document.getElementById('pin');
+document.getElementById('unlock').onclick=tryUnlock;
+pin.addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock()});
+document.getElementById('clear').onclick=()=>{pin.value='';pin.focus();}
+function tryUnlock(){
+  if(pin.value.trim()===PIN){ document.getElementById('lock').style.display='none'; initApp(); }
+  else{
+    document.getElementById('err').textContent="Wrong passcode";
+    const p=document.getElementById('lockPanel'); p.classList.remove('shake'); void p.offsetWidth; p.classList.add('shake');
+  }
+}
+
+/* Main init */
+function initApp(){
+  document.getElementById('app').style.display='block';
+  typeTamilPoem();  // start poem animation
+  setupMusic();
+}
+
+/* Tamil poem typing animation (wrap-safe) */
+function typeTamilPoem(){
+  const text = "என் ஆசைகளை நீ ஒரு ஓவியமாய் ஏற்றுக்கொள்ளும்வரை நான் வரைந்துகொண்டே இருப்பேன்";
+  const el = document.getElementById('poem');
+  const cps = Array.from(text);   // Tamil-safe splitting
+  const typeDelay = 70;           // ms per char
+  const holdAfterType = 1600;     // pause after finish (ms)
+  const fadeDelay = 400;          // fade before clearing (ms)
+  const loopPause = 400;          // pause before retype (ms)
+
+  function playOnce(){
+    el.textContent = "";
+    el.style.opacity = "1";
+    let i=0;
+    const timer = setInterval(()=>{
+      el.textContent += cps[i++];
+      if(i>=cps.length){
+        clearInterval(timer);
+        setTimeout(()=>{
+          el.style.transition = "opacity .35s ease";
+          el.style.opacity = "0";
+          setTimeout(()=>{
+            el.textContent = "";
+            el.style.opacity = "1";
+            el.style.transition = "";
+            setTimeout(playOnce, loopPause);
+          }, fadeDelay);
+        }, holdAfterType);
+      }
+    }, typeDelay);
+  }
+  playOnce();
+}
+
+/* Music */
+const player=document.getElementById('player');
+const musicWrap=document.getElementById('musicWrap');
+const playBtn=document.getElementById('playBtn');
+const seekTrack=document.getElementById('seekTrack');
+const seekFill=document.getElementById('seekFill');
+const timeText=document.getElementById('timeText');
+
+function setupMusic(){
+  musicWrap.style.display='block';
+  playBtn.addEventListener('click', async ()=>{
+    try{
+      if(player.paused){ await player.play(); playBtn.classList.add('glow'); }
+      else { player.pause(); playBtn.classList.remove('glow'); }
+    }catch(e){}
+  });
+  player.addEventListener('timeupdate', ()=>{
+    const d=player.duration||0, t=player.currentTime||0, pct=d?(t/d)*100:0;
+    seekFill.style.width=pct+'%';
+    timeText.textContent=fmtTime(t);
+  });
+  player.addEventListener('loadedmetadata', ()=>{ timeText.textContent='00:00'; });
+  seekTrack.addEventListener('click',(e)=>{
+    const r=seekTrack.getBoundingClientRect(), x=e.clientX-r.left, pct=Math.min(1,Math.max(0,x/r.width));
+    if(player.duration){ player.currentTime=pct*player.duration; }
+  });
+}
+function fmtTime(sec){ sec=Math.floor(sec||0); const m=Math.floor(sec/60), s=sec%60; return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+</script>
+</body>
+</html>
